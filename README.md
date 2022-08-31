@@ -64,7 +64,6 @@ This is a collaborative filtering based books recommender system & a streamlit w
 
 <img src="docs/2.png" alt="workflow" width="70%">
 
-<img src="docs/3.png" alt="workflow" width="70%">
 
 
 # Dataset has been used:
