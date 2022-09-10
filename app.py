@@ -2,22 +2,17 @@ import os
 import sys
 import pickle
 import streamlit as st
-import requests
 import numpy as np
-from books_recommender_app_logger.logger import logging
-from books_recommender_app_configuration.configuration import AppConfiguration
-from books_recommender_app_pipeline.training_pipeline import TrainingPipeline
-from books_recommender_app_exception.exception_handler import AppException
+from books_recommender.logger.log import logging
+from books_recommender.config.configuration import AppConfiguration
+from books_recommender.pipeline.training_pipeline import TrainingPipeline
+from books_recommender.exception.exception_handler import AppException
 
 
 class Recommendation:
     def __init__(self,app_config = AppConfiguration()):
         try:
             self.recommendation_config= app_config.get_recommendation_config()
-            self.book_name =  pickle.load(open(self.recommendation_config.book_name_serialized_objects,'rb'))
-            self.book_pivot =  pickle.load(open(self.recommendation_config.book_pivot_serialized_objects,'rb'))
-            self.final_rating =  pickle.load(open(self.recommendation_config.final_rating_serialized_objects,'rb'))
-            self.model = pickle.load(open(self.recommendation_config.trained_model_path,'rb'))
         except Exception as e:
             raise AppException(e, sys) from e
 
@@ -27,16 +22,18 @@ class Recommendation:
             book_name = []
             ids_index = []
             poster_url = []
+            book_pivot =  pickle.load(open(self.recommendation_config.book_pivot_serialized_objects,'rb'))
+            final_rating =  pickle.load(open(self.recommendation_config.final_rating_serialized_objects,'rb'))
 
             for book_id in suggestion:
-                book_name.append(self.book_pivot.index[book_id])
+                book_name.append(book_pivot.index[book_id])
 
             for name in book_name[0]: 
-                ids = np.where(self.final_rating['title'] == name)[0][0]
+                ids = np.where(final_rating['title'] == name)[0][0]
                 ids_index.append(ids)
 
             for idx in ids_index:
-                url = self.final_rating.iloc[idx]['image_url']
+                url = final_rating.iloc[idx]['image_url']
                 poster_url.append(url)
 
             return poster_url
@@ -49,13 +46,15 @@ class Recommendation:
     def recommend_book(self,book_name):
         try:
             books_list = []
-            book_id = np.where(self.book_pivot.index == book_name)[0][0]
-            distance, suggestion = self.model.kneighbors(self.book_pivot.iloc[book_id,:].values.reshape(1,-1), n_neighbors=6 )
+            model = pickle.load(open(self.recommendation_config.trained_model_path,'rb'))
+            book_pivot =  pickle.load(open(self.recommendation_config.book_pivot_serialized_objects,'rb'))
+            book_id = np.where(book_pivot.index == book_name)[0][0]
+            distance, suggestion = model.kneighbors(book_pivot.iloc[book_id,:].values.reshape(1,-1), n_neighbors=6 )
 
             poster_url = self.fetch_poster(suggestion)
             
             for i in range(len(suggestion)):
-                    books = self.book_pivot.index[suggestion[i]]
+                    books = book_pivot.index[suggestion[i]]
                     for j in books:
                         books_list.append(j)
             return books_list , poster_url   
@@ -105,14 +104,14 @@ if __name__ == "__main__":
 
     obj = Recommendation()
 
-    selected_books = st.selectbox(
-        "Type or select a book from the dropdown",
-        obj.book_name)
-
-
     #Training
     if st.button('Train Recommender System'):
         obj.train_engine()
+
+    book_names = pickle.load(open(os.path.join('templates','book_names.pkl') ,'rb'))
+    selected_books = st.selectbox(
+        "Type or select a book from the dropdown",
+        book_names)
     
     #recommendation
     if st.button('Show Recommendation'):

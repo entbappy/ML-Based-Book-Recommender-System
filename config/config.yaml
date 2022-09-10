@@ -1,5 +1,5 @@
 artifacts_config:
-  artifacts_dir: books_recommender_artifacts
+  artifacts_dir: artifacts
 
 data_ingestion_config:
   dataset_download_url: https://github.com/entbappy/Branching-tutorial/raw/master/books_data.zip

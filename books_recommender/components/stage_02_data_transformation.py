@@ -2,11 +2,10 @@ import os
 import sys
 import pickle
 import pandas as pd
-import numpy as np
-from books_recommender_app_logger.logger import logging
-from sklearn.feature_extraction.text import CountVectorizer
-from books_recommender_app_exception.exception_handler import AppException
-from books_recommender_app_configuration.configuration import AppConfiguration
+from books_recommender.logger.log import logging
+from books_recommender.config.configuration import AppConfiguration
+from books_recommender.exception.exception_handler import AppException
+
 
 
 class DataTransformation:

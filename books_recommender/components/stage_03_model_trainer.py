@@ -3,10 +3,9 @@ import sys
 import pickle
 from sklearn.neighbors import NearestNeighbors
 from scipy.sparse import csr_matrix
-from books_recommender_app_logger.logger import logging
-from books_recommender_app_exception.exception_handler import AppException
-from books_recommender_app_configuration.configuration import AppConfiguration
-
+from books_recommender.logger.log import logging
+from books_recommender.config.configuration import AppConfiguration
+from books_recommender.exception.exception_handler import AppException
 
 
 class ModelTrainer:
