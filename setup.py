@@ -6,7 +6,7 @@ with open("README.md", "r", encoding="utf-8") as f:
 ## edit below variables as per your requirements -
 REPO_NAME = "ML Based Books Recommender System"
 AUTHOR_USER_NAME = "BOKTIAR AHMED BAPPY"
-SRC_REPO = "books_recommender_src"
+SRC_REPO = "books_recommender"
 LIST_OF_REQUIREMENTS = []
 
 
@@ -24,5 +24,3 @@ setup(
     python_requires=">=3.7",
     install_requires=LIST_OF_REQUIREMENTS
 )
-
-
